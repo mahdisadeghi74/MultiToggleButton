@@ -40,25 +40,23 @@ class MultiToggleButton @JvmOverloads constructor(
     private var currentItem: Int = 0
     private var itemCount: Int = 0
 
-
     // listener
     private var onItemChangeListener: ((Int, Int) -> Unit)? = null
 
     init {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         inflater.inflate(R.layout.layout_multi_toggle_button, this)
-
         val typeArray = context.obtainStyledAttributes(attrs, R.styleable.MultiToggleButton)
 
         try {
             text = typeArray.getString(R.styleable.MultiToggleButton_text)
-            buttonPadding = typeArray.getDimension(R.styleable.MultiToggleButton_buttonPadding, 0f)
+            buttonPadding = typeArray.getDimension(R.styleable.MultiToggleButton_buttonPadding, toDP(8f))
             toggleButtonTint =
                 typeArray.getResourceId(R.styleable.MultiToggleButton_toggleButtonTint, 0)
-            textSize = typeArray.getDimension(R.styleable.MultiToggleButton_textSize, toDP(12f))
+            textSize = typeArray.getDimension(R.styleable.MultiToggleButton_textSize, toDP(14f))
             textColor = typeArray.getResourceId(R.styleable.MultiToggleButton_textColor, 12)
             textStyle = typeArray.getInt(R.styleable.MultiToggleButton_textStyle,  TEXTSTYLE_NORMAL)
-            toggleButtonSize = typeArray.getDimensionPixelSize(R.styleable.MultiToggleButton_toggleButtonSize,  24).toFloat()
+            toggleButtonSize = typeArray.getDimensionPixelSize(R.styleable.MultiToggleButton_toggleButtonSize,  toDP(24f).toInt()).toFloat()
 
             tvTgb.text = text
             tvTgb.setPadding(buttonPadding.toInt(), 0, 0, 0)
@@ -101,6 +99,14 @@ class MultiToggleButton @JvmOverloads constructor(
         setCurrentImageResource()
     }
 
+    fun addToggleDrawables(resources: ArrayList<Int?>) {
+        toggleDrawables = arrayListOf()
+        toggleDrawables?.addAll(resources)
+
+        itemCount = resources.size
+        setCurrentImageResource()
+    }
+
     private fun setCurrentImageResource() {
         if (itemCount > 0)
             tgb.setImageDrawable(toggleDrawables?.get(currentItem)?.let { context.getDrawable(it) })
@@ -130,4 +136,6 @@ class MultiToggleButton @JvmOverloads constructor(
             context.resources.displayMetrics
         )
     }
+
+
 }

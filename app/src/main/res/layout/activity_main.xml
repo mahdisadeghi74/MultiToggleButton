@@ -11,12 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        android:padding="20dp"
         app:text="@string/app_name"
-        app:buttonPadding="10dp"
-        app:textSize="50sp"
         app:textColor="@color/colorPrimary"
         app:toggleButtonTint="@color/colorPrimary"
-        app:toggleButtonSize="100dp"
         android:id="@+id/mtb"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
