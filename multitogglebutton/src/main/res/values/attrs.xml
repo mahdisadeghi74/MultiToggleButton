@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MultiToggleButton">
+        <attr name="text" format="string"/>
+        <attr name="buttonPadding" format="dimension"/>
+        <attr name="toggleButtonTint" format="color"/>
+        <attr name="toggleButtonSize" format="dimension"/>
+        <attr name="textSize" format="dimension"/>
+        <attr name="textColor" format="color"/>
+        <attr name="textStyle" format="enum">
+            <enum name="normal" value="0"/>
+            <enum name="bold" value="1"/>
+            <enum name="italic" value="2"/>
+        </attr>
+    </declare-styleable>
+</resources>

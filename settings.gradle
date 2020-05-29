@@ -1,0 +1,3 @@
+rootProject.name='ModuleProject'
+include ':app'
+include ':multitogglebutton'
