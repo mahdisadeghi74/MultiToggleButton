@@ -11,7 +11,6 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
@@ -45,11 +44,12 @@ public class MultiToggleButton extends LinearLayout {
         super(context);
     }
 
-    public MultiToggleButton(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
+    public MultiToggleButton(Context context, AttributeSet attrs) {
+        super(context, attrs, 0);
+        init(context, attrs, 0);
     }
 
-    public MultiToggleButton(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public MultiToggleButton(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.context = context;
         init(context, attrs, defStyleAttr);
@@ -57,18 +57,19 @@ public class MultiToggleButton extends LinearLayout {
 
     public MultiToggleButton(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+        init(context, attrs, defStyleAttr);
     }
 
-    private void init(final Context context, @Nullable AttributeSet attrs, int defStyleAttr){
-        // views
-        TextView tvTgb = findViewById(R.id.tvTgb);
-        ImageButton tgb = findViewById(R.id.tgb);
-
+    private void init(final Context context, AttributeSet attrs, int defStyleAttr){
         textSize = toDP(context, 12f);
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
         if (inflater != null)
             inflater.inflate(R.layout.layout_multi_toggle_button, this);
+
+        TextView tvTgb = findViewById(R.id.tvTgb);
+        ImageButton tgb = findViewById(R.id.tgb);
         TypedArray typeArray = context.obtainStyledAttributes(attrs, R.styleable.MultiToggleButton);
 
 
@@ -82,45 +83,52 @@ public class MultiToggleButton extends LinearLayout {
             textStyle = typeArray.getInt(R.styleable.MultiToggleButton_textStyle, TEXT_STYLE_NORMAL);
             toggleButtonSize = typeArray.getDimensionPixelSize(R.styleable.MultiToggleButton_toggleButtonSize,  Math.round(toDP(context,24f)));
 
-            tvTgb.setText(text);
-            tvTgb.setPadding(buttonPadding.intValue(), 0, 0, 0);
-            tvTgb.setTextColor(context.getResources().getColor(textColor));
-            tvTgb.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
+            if (tvTgb != null) {
+                tvTgb.setText(text);
+                tvTgb.setPadding(buttonPadding.intValue(), 0, 0, 0);
+                tvTgb.setTextColor(context.getResources().getColor(textColor));
+                tvTgb.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
 
-
-            switch (textStyle){
-                case TEXT_STYLE_BOLD:
-                    tvTgb.setTypeface(Typeface.DEFAULT_BOLD);
-                    break;
-                case TEXT_STYLE_ITALIC:
-                    tvTgb.setTypeface(tvTgb.getTypeface(), Typeface.ITALIC);
-                    break;
-                default:
-                    tvTgb.setTypeface(Typeface.DEFAULT);
-                    break;
+                if (textStyle != 0) {
+                    switch (textStyle) {
+                        case TEXT_STYLE_BOLD:
+                            tvTgb.setTypeface(Typeface.DEFAULT_BOLD);
+                            break;
+                        case TEXT_STYLE_ITALIC:
+                            tvTgb.setTypeface(tvTgb.getTypeface(), Typeface.ITALIC);
+                            break;
+                        default:
+                            tvTgb.setTypeface(Typeface.DEFAULT);
+                            break;
+                    }
+                }
             }
 
-            if (toggleButtonTint != 0)
-                tgb.setImageTintList(context.getResources().getColorStateList(toggleButtonTint));
+            if (tgb != null) {
+                if (toggleButtonTint != 0)
+                    tgb.setImageTintList(context.getResources().getColorStateList(toggleButtonTint));
 
-            tgb.getLayoutParams().height = Math.round(toggleButtonSize);
-            tgb.getLayoutParams().width = Math.round(toggleButtonSize);
+                tgb.getLayoutParams().height = Math.round(toggleButtonSize);
+                tgb.getLayoutParams().width = Math.round(toggleButtonSize);
+            }
         }finally {
             typeArray.recycle();
         }
 
-        tgb.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setToggleImageResource();
-                setCurrentImageResource(context);
+        if (tgb != null) {
+            tgb.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setToggleImageResource();
+                    setCurrentImageResource(context);
 
-                if (onItemChangeListener != null){
-                    onItemChangeListener.onItemChangeListener(getCurrentResource(),
-                            currentItem);
+                    if (onItemChangeListener != null) {
+                        onItemChangeListener.onItemChangeListener(getCurrentResource(),
+                                currentItem);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     public void addToggleDrawables(int... resources) {
