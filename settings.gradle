@@ -1,3 +1,4 @@
 rootProject.name='ModuleProject'
 include ':app'
 include ':multitogglebutton'
+include ':multitogglebutton-java'

@@ -18,5 +18,7 @@ class MainActivity : AppCompatActivity() {
         mtb.setOnItemChangeListener { resourceId, position ->
             Toast.makeText(applicationContext, "resourceId: $resourceId position: $position", Toast.LENGTH_SHORT).show()
         }
+
+
     }
 }
