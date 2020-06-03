@@ -28,6 +28,7 @@ class MultiToggleButton @JvmOverloads constructor(
 
     //attrs put user
     private var toggleDrawables: ArrayList<Int?>? = null
+    private var toggleStrings: ArrayList<String>? = null
     var text: String? = ""
     var buttonPadding: Float = 0f
     var toggleButtonTint: Int = 0
@@ -39,9 +40,11 @@ class MultiToggleButton @JvmOverloads constructor(
     // variables counter
     private var currentItem: Int = 0
     private var itemCount: Int = 0
+    private var isText: Boolean = false
 
     // listener
     private var onItemChangeListener: ((Int, Int) -> Unit)? = null
+    private var onTextChangeListener: ((String, Int) -> Unit)? = null
 
     init {
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -84,14 +87,29 @@ class MultiToggleButton @JvmOverloads constructor(
         tgb.setOnClickListener {
             setToggleImageResource()
             setCurrentImageResource()
-            onItemChangeListener?.let { function ->
-                getCurrentResource()?.let { it1 -> function(it1, currentItem) }
+            if (!isText) {
+                onItemChangeListener?.let { function ->
+                    getCurrentResource()?.let { it1 -> function(it1, currentItem) }
+                }
+            } else{
+                onTextChangeListener?.let { function ->
+                    getCurrentText()?.let {
+                        it -> function(it, currentItem)
+                    }
+                }
             }
+        }
+
+        tvTgb.setOnClickListener {
+            tgb.callOnClick()
         }
 
     }
 
+
+
     fun addToggleDrawables(vararg resources: Int?) {
+        isText = false
         toggleDrawables = arrayListOf()
         toggleDrawables?.addAll(resources)
 
@@ -99,7 +117,26 @@ class MultiToggleButton @JvmOverloads constructor(
         setCurrentImageResource()
     }
 
-    fun addToggleDrawables(resources: ArrayList<Int?>) {
+    fun addToggleTexts(vararg resources: String) {
+        isText = true
+        toggleStrings = arrayListOf()
+        toggleStrings?.addAll(resources)
+
+        itemCount = resources.size
+        setCurrentImageResource()
+    }
+
+    fun addToggleText(resources: ArrayList<String>?) {
+        isText = true
+        toggleStrings = arrayListOf()
+        resources?.let { toggleStrings?.addAll(it) }
+
+        itemCount = resources?.size ?: 0
+        setCurrentImageResource()
+    }
+
+    fun addToggleTexts(resources: ArrayList<Int?>) {
+        isText = false
         toggleDrawables = arrayListOf()
         toggleDrawables?.addAll(resources)
 
@@ -108,8 +145,11 @@ class MultiToggleButton @JvmOverloads constructor(
     }
 
     private fun setCurrentImageResource() {
-        if (itemCount > 0)
-            tgb.setImageDrawable(toggleDrawables?.get(currentItem)?.let { context.getDrawable(it) })
+        if (itemCount > 0) {
+            if (!isText)
+                tgb.setImageDrawable(toggleDrawables?.get(currentItem)?.let { context.getDrawable(it) })
+            else tvTgb.text = toggleStrings?.get(currentItem)
+        }
     }
 
     private fun setToggleImageResource() {
@@ -120,11 +160,17 @@ class MultiToggleButton @JvmOverloads constructor(
         return toggleDrawables?.get(currentItem)
     }
 
+    private fun getCurrentText(): String? {
+        return toggleStrings?.get(currentItem)
+    }
 
     fun setOnItemChangeListener(onItemChangeListener: (resourceId: Int, position: Int) -> Unit) {
         this.onItemChangeListener = onItemChangeListener
     }
 
+    fun setOnTextChangeListener(onTextChangeListener: (text: String, position: Int) -> Unit){
+        this.onTextChangeListener = onTextChangeListener
+    }
     fun getCurrentItem(): Int? {
         return getCurrentResource()
     }
@@ -135,6 +181,15 @@ class MultiToggleButton @JvmOverloads constructor(
             value,
             context.resources.displayMetrics
         )
+    }
+
+
+    fun setDefaultPosition(position: Int){
+        if (itemCount > 0)
+            if (position in 0 until itemCount){
+                currentItem = position
+                setCurrentImageResource()
+            }
     }
 
 
